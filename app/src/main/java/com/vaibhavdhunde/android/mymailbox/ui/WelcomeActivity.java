@@ -1,4 +1,4 @@
-package com.vaibhavdhunde.android.mymailbox;
+package com.vaibhavdhunde.android.mymailbox.ui;
 
 import android.content.Intent;
 import android.os.Build;

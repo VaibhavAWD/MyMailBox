@@ -1,5 +1,6 @@
-package com.vaibhavdhunde.android.mymailbox;
+package com.vaibhavdhunde.android.mymailbox.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -12,8 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.vaibhavdhunde.android.mymailbox.R;
+import com.vaibhavdhunde.android.mymailbox.adapter.EmailAdapter;
 import com.vaibhavdhunde.android.mymailbox.data.EmailData;
 import com.vaibhavdhunde.android.mymailbox.model.Email;
+import com.vaibhavdhunde.android.mymailbox.util.RecyclerTouchListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +26,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class EmailListFragment extends Fragment {
+
+    public static final String EXTRA_EMAIL = "extra_email";
 
     @BindView(R.id.list_emails)
     RecyclerView mListEmails;
@@ -37,8 +43,20 @@ public class EmailListFragment extends Fragment {
 
         setupListEmails();
 
-        EmailAdapter emailAdapter = new EmailAdapter(getEmails());
+        final EmailAdapter emailAdapter = new EmailAdapter(getEmails());
         mListEmails.setAdapter(emailAdapter);
+
+        mListEmails.addOnItemTouchListener(new RecyclerTouchListener(getContext(), mListEmails,
+                new RecyclerTouchListener.OnClickListener() {
+                    @Override
+                    public void OnClick(int position) {
+                        Email currentEmail = emailAdapter.getEmails().get(position);
+
+                        Intent detailIntent = new Intent(getContext(), DetailsActivity.class);
+                        detailIntent.putExtra(EXTRA_EMAIL, currentEmail);
+                        startActivity(detailIntent);
+                    }
+                }));
 
         return rootView;
     }

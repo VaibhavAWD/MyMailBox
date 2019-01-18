@@ -1,4 +1,4 @@
-package com.vaibhavdhunde.android.mymailbox;
+package com.vaibhavdhunde.android.mymailbox.adapter;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.vaibhavdhunde.android.mymailbox.R;
 import com.vaibhavdhunde.android.mymailbox.model.Email;
 
 import java.util.List;
@@ -80,5 +81,9 @@ public class EmailAdapter extends RecyclerView.Adapter<EmailAdapter.EmailViewHol
     @Override
     public int getItemCount() {
         return mEmails.size();
+    }
+
+    public List<Email> getEmails() {
+        return mEmails;
     }
 }
