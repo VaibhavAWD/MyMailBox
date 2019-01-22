@@ -20,7 +20,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.MainActivity" />
+        <activity
+            android:name=".ui.MainActivity"
+            android:theme="@style/AppTheme.Welcome" />
         <activity
             android:name=".ui.DetailsActivity"
             android:parentActivityName=".ui.MainActivity"

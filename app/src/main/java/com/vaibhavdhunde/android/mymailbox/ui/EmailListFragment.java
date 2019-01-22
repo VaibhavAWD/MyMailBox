@@ -1,5 +1,6 @@
 package com.vaibhavdhunde.android.mymailbox.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -27,10 +28,28 @@ import butterknife.ButterKnife;
 
 public class EmailListFragment extends Fragment {
 
-    public static final String EXTRA_EMAIL = "extra_email";
+    private OnEmailClickListener mOnEmailClickListener;
+
+    public interface OnEmailClickListener {
+        void OnEmailSelected(Email email);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            mOnEmailClickListener = (OnEmailClickListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() +
+                    " must implement OnEmailClickListener");
+        }
+    }
 
     @BindView(R.id.list_emails)
     RecyclerView mListEmails;
+
+    private Context mContext;
 
     public EmailListFragment() {
     }
@@ -41,20 +60,19 @@ public class EmailListFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_emails_list, container, false);
         ButterKnife.bind(this, rootView);
 
+        mContext = getContext();
+
         setupListEmails();
 
         final EmailAdapter emailAdapter = new EmailAdapter(getEmails());
         mListEmails.setAdapter(emailAdapter);
 
-        mListEmails.addOnItemTouchListener(new RecyclerTouchListener(getContext(), mListEmails,
+        mListEmails.addOnItemTouchListener(new RecyclerTouchListener(mContext, mListEmails,
                 new RecyclerTouchListener.OnClickListener() {
                     @Override
                     public void OnClick(int position) {
                         Email currentEmail = emailAdapter.getEmails().get(position);
-
-                        Intent detailIntent = new Intent(getContext(), DetailsActivity.class);
-                        detailIntent.putExtra(EXTRA_EMAIL, currentEmail);
-                        startActivity(detailIntent);
+                        mOnEmailClickListener.OnEmailSelected(currentEmail);
                     }
                 }));
 
@@ -82,8 +100,8 @@ public class EmailListFragment extends Fragment {
 
     private void setupListEmails() {
         mListEmails.setHasFixedSize(true);
-        LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        LayoutManager layoutManager = new LinearLayoutManager(mContext);
         mListEmails.setLayoutManager(layoutManager);
-        mListEmails.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayout.VERTICAL));
+        mListEmails.addItemDecoration(new DividerItemDecoration(mContext, LinearLayout.VERTICAL));
     }
 }

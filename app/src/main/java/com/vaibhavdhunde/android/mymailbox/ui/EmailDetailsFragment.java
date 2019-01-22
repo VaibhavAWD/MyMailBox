@@ -19,6 +19,7 @@ import butterknife.OnClick;
 
 public class EmailDetailsFragment extends Fragment {
 
+    private static final String CURRENT_EMAIL = "currentEmail";
     private static final String DETAILS_VISIBILITY = "detailsVisibility";
 
     @BindView(R.id.text_subject)
@@ -54,6 +55,8 @@ public class EmailDetailsFragment extends Fragment {
     @BindView(R.id.details_group)
     Group mDetailsGroup;
 
+    private Email mCurrentEmail;
+
     public EmailDetailsFragment() {
     }
 
@@ -63,10 +66,9 @@ public class EmailDetailsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_email_details, container, false);
         ButterKnife.bind(this, rootView);
 
-        Email currentEmail = getActivity().getIntent().getParcelableExtra(EmailListFragment.EXTRA_EMAIL);
-        fillDetails(currentEmail);
-
         if (savedInstanceState != null) {
+            mCurrentEmail = savedInstanceState.getParcelable(CURRENT_EMAIL);
+
             boolean isVisible = savedInstanceState.getBoolean(DETAILS_VISIBILITY);
 
             if (isVisible) {
@@ -76,35 +78,40 @@ public class EmailDetailsFragment extends Fragment {
             }
         }
 
+        fillDetails();
+
         return rootView;
     }
 
-    private void fillDetails(Email currentEmail) {
-        mTextSubject.setText(currentEmail.getSubject());
+    private void fillDetails() {
+        mTextSubject.setText(mCurrentEmail.getSubject());
 
-        if (currentEmail.isBookmarked()) {
+        if (mCurrentEmail.isBookmarked()) {
             mImageBookmark.setVisibility(View.VISIBLE);
         } else {
             mImageBookmark.setVisibility(View.GONE);
         }
 
-        mImageProfile.setImageResource(currentEmail.getImage());
+        mImageProfile.setImageResource(mCurrentEmail.getImage());
 
-        mTextName.setText(currentEmail.getName());
+        mTextName.setText(mCurrentEmail.getName());
 
-        mTextDate.setText(currentEmail.getDate());
+        mTextDate.setText(mCurrentEmail.getDate());
 
-        mTextFromName.setText(currentEmail.getName());
+        mTextFromName.setText(mCurrentEmail.getName());
 
-        mTextEmail.setText(currentEmail.getEmail());
+        mTextEmail.setText(mCurrentEmail.getEmail());
 
-        mTextDetailsDate.setText(currentEmail.getDate());
+        mTextDetailsDate.setText(mCurrentEmail.getDate());
 
-        mTextMatter.setText(currentEmail.getMatter()
+        mTextMatter.setText(mCurrentEmail.getMatter()
                 .replace("Hi, ", "Hi,\n\n")
                 .replace("Regards,", "\n\nRegards,\n")
-                .replace(getString(R.string.name_placeholder), currentEmail.getName()));
+                .replace(getString(R.string.name_placeholder), mCurrentEmail.getName()));
+    }
 
+    public void setEmail(Email email) {
+        mCurrentEmail = email;
     }
 
     @OnClick(R.id.text_view_details)
@@ -129,6 +136,8 @@ public class EmailDetailsFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle currentState) {
+        currentState.putParcelable(CURRENT_EMAIL, mCurrentEmail);
+
         if (mDetailsGroup.getVisibility() == View.VISIBLE) {
             currentState.putBoolean(DETAILS_VISIBILITY, true);
         } else {
